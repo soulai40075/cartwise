@@ -57,7 +57,13 @@ export default function Home() {
         }
       </div>
 
-      <input type="file" accept="image/*" onChange={handleImageChange} style={{ marginBottom: '1rem', display: 'block' }} />
+      <input
+        type="file"
+        accept="image/*"
+        capture="environment"
+        onChange={handleImageChange}
+        style={{ marginBottom: '1rem', display: 'block' }}
+      />
 
       <button
         onClick={handleSubmit}
@@ -69,7 +75,7 @@ export default function Home() {
           marginBottom: '1.5rem'
         }}
       >
-        {loading ? 'Scanning...' : 'Scan Receipt'}
+        {loading ? 'Scanning... (may take 30s if AI is waking up)' : 'Scan Receipt'}
       </button>
 
       {error && (
