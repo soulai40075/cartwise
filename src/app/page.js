@@ -1,11 +1,14 @@
 'use client';
 import { useState } from 'react';
 
+const HF_SPACE = 'https://soulai40075-receipt-ocr-pipeline.hf.space';
+
 export default function Home() {
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState('');
   const [error, setError] = useState(null);
 
   function handleImageChange(e) {
@@ -15,6 +18,7 @@ export default function Home() {
     setPreview(URL.createObjectURL(file));
     setResult(null);
     setError(null);
+    setStatus('');
   }
 
   async function handleSubmit() {
@@ -22,6 +26,7 @@ export default function Home() {
     setLoading(true);
     setError(null);
     setResult(null);
+    setStatus('Sending receipt to AI...');
 
     try {
       const formData = new FormData();
@@ -34,11 +39,50 @@ export default function Home() {
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Something went wrong');
-      setResult(data);
+
+      const eventId = data.event_id;
+      setStatus('AI is reading your receipt...');
+
+      // Poll HuggingFace directly from browser
+      let attempts = 0;
+      while (attempts < 60) {
+        await new Promise(r => setTimeout(r, 3000));
+        attempts++;
+
+        const pollRes = await fetch(
+          `${HF_SPACE}/gradio_api/call/process_receipt/${eventId}`
+        );
+
+        const text = await pollRes.text();
+        const lines = text.split('\n').filter(l => l.startsWith('data:'));
+
+        if (!lines.length) {
+          setStatus(`Still processing... (${attempts * 3}s)`);
+          continue;
+        }
+
+        const raw = lines[lines.length - 1].replace('data: ', '').trim();
+
+        try {
+          const resultData = JSON.parse(raw);
+          const jsonStr = resultData[1];
+          const parsed = JSON.parse(jsonStr);
+          setResult(parsed);
+          setStatus('');
+          setLoading(false);
+          return;
+        } catch {
+          continue;
+        }
+      }
+
+      throw new Error('Timed out waiting for result');
+
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
+      setStatus('');
     }
   }
 
@@ -72,11 +116,17 @@ export default function Home() {
           width: '100%', padding: '0.75rem', borderRadius: 8, border: 'none',
           background: loading ? '#ccc' : '#16a34a', color: 'white',
           fontSize: '1rem', cursor: loading ? 'not-allowed' : 'pointer',
-          marginBottom: '1.5rem'
+          marginBottom: '0.5rem'
         }}
       >
-        {loading ? 'Scanning... (may take 30s if AI is waking up)' : 'Scan Receipt'}
+        {loading ? 'Scanning...' : 'Scan Receipt'}
       </button>
+
+      {status && (
+        <p style={{ textAlign: 'center', color: '#666', fontSize: '0.9rem', marginBottom: '1rem' }}>
+          {status}
+        </p>
+      )}
 
       {error && (
         <div style={{ background: '#fee2e2', padding: '1rem', borderRadius: 8, color: '#dc2626', marginBottom: '1rem' }}>
