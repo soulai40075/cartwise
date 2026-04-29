@@ -9,6 +9,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
+  const [authReady, setAuthReady] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [authMode, setAuthMode] = useState('login');
@@ -17,11 +18,18 @@ export default function Home() {
 
   useEffect(() => {
     const supabase = createClient();
-    if (!supabase) return;
-    supabase.auth.getUser().then(({ data }) => setUser(data.user));
-    supabase.auth.onAuthStateChange((_event, session) => {
+    if (!supabase) { setAuthReady(true); return; }
+    
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user);
+      setAuthReady(true);
+    });
+
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
     });
+
+    return () => listener?.subscription?.unsubscribe();
   }, []);
 
   async function handleAuth() {
@@ -66,16 +74,10 @@ export default function Home() {
     setLoading(true);
     setError(null);
     setResult(null);
-
     try {
       const formData = new FormData();
       formData.append('image', image);
-
-      const res = await fetch('/api/scan-receipt', {
-        method: 'POST',
-        body: formData,
-      });
-
+      const res = await fetch('/api/scan-receipt', { method: 'POST', body: formData });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Something went wrong');
       setResult(data);
@@ -86,6 +88,14 @@ export default function Home() {
     }
   }
 
+  if (!authReady) {
+    return (
+      <main style={{ maxWidth: 400, margin: '0 auto', padding: '2rem', fontFamily: 'sans-serif', textAlign: 'center' }}>
+        <p style={{ color: '#666', marginTop: '4rem' }}>Loading...</p>
+      </main>
+    );
+  }
+
   if (!user) {
     return (
       <main style={{ maxWidth: 400, margin: '0 auto', padding: '2rem', fontFamily: 'sans-serif' }}>
@@ -94,54 +104,19 @@ export default function Home() {
 
         <div style={{ background: '#f9fafb', borderRadius: 12, padding: '1.5rem', border: '1px solid #e5e7eb' }}>
           <div style={{ display: 'flex', marginBottom: '1.5rem', gap: 8 }}>
-            <button
-              onClick={() => setAuthMode('login')}
-              style={{
-                flex: 1, padding: '0.5rem', borderRadius: 8, border: 'none',
-                background: authMode === 'login' ? '#16a34a' : '#e5e7eb',
-                color: authMode === 'login' ? 'white' : '#374151',
-                cursor: 'pointer', fontWeight: 'bold'
-              }}
-            >Login</button>
-            <button
-              onClick={() => setAuthMode('signup')}
-              style={{
-                flex: 1, padding: '0.5rem', borderRadius: 8, border: 'none',
-                background: authMode === 'signup' ? '#16a34a' : '#e5e7eb',
-                color: authMode === 'signup' ? 'white' : '#374151',
-                cursor: 'pointer', fontWeight: 'bold'
-              }}
-            >Sign Up</button>
+            <button onClick={() => setAuthMode('login')} style={{ flex: 1, padding: '0.5rem', borderRadius: 8, border: 'none', background: authMode === 'login' ? '#16a34a' : '#e5e7eb', color: authMode === 'login' ? 'white' : '#374151', cursor: 'pointer', fontWeight: 'bold' }}>Login</button>
+            <button onClick={() => setAuthMode('signup')} style={{ flex: 1, padding: '0.5rem', borderRadius: 8, border: 'none', background: authMode === 'signup' ? '#16a34a' : '#e5e7eb', color: authMode === 'signup' ? 'white' : '#374151', cursor: 'pointer', fontWeight: 'bold' }}>Sign Up</button>
           </div>
 
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            style={{ width: '100%', padding: '0.75rem', borderRadius: 8, border: '1px solid #d1d5db', marginBottom: '0.75rem', boxSizing: 'border-box', fontSize: '1rem' }}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            style={{ width: '100%', padding: '0.75rem', borderRadius: 8, border: '1px solid #d1d5db', marginBottom: '1rem', boxSizing: 'border-box', fontSize: '1rem' }}
-          />
+          <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)}
+            style={{ width: '100%', padding: '0.75rem', borderRadius: 8, border: '1px solid #d1d5db', marginBottom: '0.75rem', boxSizing: 'border-box', fontSize: '1rem' }} />
+          <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)}
+            style={{ width: '100%', padding: '0.75rem', borderRadius: 8, border: '1px solid #d1d5db', marginBottom: '1rem', boxSizing: 'border-box', fontSize: '1rem' }} />
 
-          {authError && (
-            <div style={{ color: '#dc2626', fontSize: '0.9rem', marginBottom: '0.75rem' }}>{authError}</div>
-          )}
+          {authError && <div style={{ color: '#dc2626', fontSize: '0.9rem', marginBottom: '0.75rem' }}>{authError}</div>}
 
-          <button
-            onClick={handleAuth}
-            disabled={authLoading}
-            style={{
-              width: '100%', padding: '0.75rem', borderRadius: 8, border: 'none',
-              background: '#16a34a', color: 'white', fontSize: '1rem',
-              cursor: authLoading ? 'not-allowed' : 'pointer', fontWeight: 'bold'
-            }}
-          >
+          <button onClick={handleAuth} disabled={authLoading}
+            style={{ width: '100%', padding: '0.75rem', borderRadius: 8, border: 'none', background: '#16a34a', color: 'white', fontSize: '1rem', cursor: authLoading ? 'not-allowed' : 'pointer', fontWeight: 'bold' }}>
             {authLoading ? 'Please wait...' : authMode === 'login' ? 'Login' : 'Sign Up'}
           </button>
         </div>
@@ -160,41 +135,22 @@ export default function Home() {
       </div>
       <p style={{ color: '#666', marginBottom: '2rem' }}>Upload a receipt to find cheaper prices nearby</p>
 
-      <div style={{
-        border: '2px dashed #ccc', borderRadius: 12, padding: '2rem',
-        textAlign: 'center', marginBottom: '1rem', background: '#fafafa'
-      }}>
+      <div style={{ border: '2px dashed #ccc', borderRadius: 12, padding: '2rem', textAlign: 'center', marginBottom: '1rem', background: '#fafafa' }}>
         {preview
           ? <img src={preview} alt="Receipt" style={{ maxWidth: '100%', maxHeight: 300, borderRadius: 8 }} />
-          : <p style={{ color: '#aaa' }}>No image selected</p>
-        }
+          : <p style={{ color: '#aaa' }}>No image selected</p>}
       </div>
 
-      <input
-        type="file"
-        accept="image/*"
-        capture="environment"
-        onChange={handleImageChange}
-        style={{ marginBottom: '1rem', display: 'block' }}
-      />
+      <input type="file" accept="image/*" capture="environment" onChange={handleImageChange}
+        style={{ marginBottom: '1rem', display: 'block' }} />
 
-      <button
-        onClick={handleSubmit}
-        disabled={!image || loading}
-        style={{
-          width: '100%', padding: '0.75rem', borderRadius: 8, border: 'none',
-          background: loading ? '#ccc' : '#16a34a', color: 'white',
-          fontSize: '1rem', cursor: loading ? 'not-allowed' : 'pointer',
-          marginBottom: '1.5rem'
-        }}
-      >
+      <button onClick={handleSubmit} disabled={!image || loading}
+        style={{ width: '100%', padding: '0.75rem', borderRadius: 8, border: 'none', background: loading ? '#ccc' : '#16a34a', color: 'white', fontSize: '1rem', cursor: loading ? 'not-allowed' : 'pointer', marginBottom: '1.5rem' }}>
         {loading ? 'Scanning... (may take 30s)' : 'Scan Receipt'}
       </button>
 
       {error && (
-        <div style={{ background: '#fee2e2', padding: '1rem', borderRadius: 8, color: '#dc2626', marginBottom: '1rem' }}>
-          {error}
-        </div>
+        <div style={{ background: '#fee2e2', padding: '1rem', borderRadius: 8, color: '#dc2626', marginBottom: '1rem' }}>{error}</div>
       )}
 
       {result && (
@@ -203,7 +159,6 @@ export default function Home() {
           <p style={{ color: '#666', fontSize: '0.9rem', marginBottom: '1rem' }}>
             {result.store_address || ''} {result.date ? `· ${result.date}` : ''} {result.time ? `· ${result.time}` : ''}
           </p>
-
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ borderBottom: '2px solid #bbf7d0' }}>
