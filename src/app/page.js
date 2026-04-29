@@ -2,8 +2,6 @@
 import { useState, useEffect } from 'react';
 import { createClient } from './supabase';
 
-const supabase = createClient();
-
 export default function Home() {
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -18,6 +16,8 @@ export default function Home() {
   const [authLoading, setAuthLoading] = useState(false);
 
   useEffect(() => {
+    const supabase = createClient();
+    if (!supabase) return;
     supabase.auth.getUser().then(({ data }) => setUser(data.user));
     supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
@@ -25,6 +25,8 @@ export default function Home() {
   }, []);
 
   async function handleAuth() {
+    const supabase = createClient();
+    if (!supabase) return;
     setAuthLoading(true);
     setAuthError(null);
     try {
@@ -44,6 +46,8 @@ export default function Home() {
   }
 
   async function handleSignOut() {
+    const supabase = createClient();
+    if (!supabase) return;
     await supabase.auth.signOut();
     setResult(null);
   }
