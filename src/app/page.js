@@ -1,5 +1,8 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createClient } from './supabase';
+
+const supabase = createClient();
 
 export default function Home() {
   const [image, setImage] = useState(null);
@@ -7,6 +10,43 @@ export default function Home() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [user, setUser] = useState(null);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [authMode, setAuthMode] = useState('login');
+  const [authError, setAuthError] = useState(null);
+  const [authLoading, setAuthLoading] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setUser(data.user));
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+  }, []);
+
+  async function handleAuth() {
+    setAuthLoading(true);
+    setAuthError(null);
+    try {
+      if (authMode === 'login') {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.auth.signUp({ email, password });
+        if (error) throw error;
+        alert('Check your email to confirm your account!');
+      }
+    } catch (err) {
+      setAuthError(err.message);
+    } finally {
+      setAuthLoading(false);
+    }
+  }
+
+  async function handleSignOut() {
+    await supabase.auth.signOut();
+    setResult(null);
+  }
 
   function handleImageChange(e) {
     const file = e.target.files[0];
@@ -42,9 +82,78 @@ export default function Home() {
     }
   }
 
+  if (!user) {
+    return (
+      <main style={{ maxWidth: 400, margin: '0 auto', padding: '2rem', fontFamily: 'sans-serif' }}>
+        <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>🛒 CartWise</h1>
+        <p style={{ color: '#666', marginBottom: '2rem' }}>Find cheaper grocery prices near you</p>
+
+        <div style={{ background: '#f9fafb', borderRadius: 12, padding: '1.5rem', border: '1px solid #e5e7eb' }}>
+          <div style={{ display: 'flex', marginBottom: '1.5rem', gap: 8 }}>
+            <button
+              onClick={() => setAuthMode('login')}
+              style={{
+                flex: 1, padding: '0.5rem', borderRadius: 8, border: 'none',
+                background: authMode === 'login' ? '#16a34a' : '#e5e7eb',
+                color: authMode === 'login' ? 'white' : '#374151',
+                cursor: 'pointer', fontWeight: 'bold'
+              }}
+            >Login</button>
+            <button
+              onClick={() => setAuthMode('signup')}
+              style={{
+                flex: 1, padding: '0.5rem', borderRadius: 8, border: 'none',
+                background: authMode === 'signup' ? '#16a34a' : '#e5e7eb',
+                color: authMode === 'signup' ? 'white' : '#374151',
+                cursor: 'pointer', fontWeight: 'bold'
+              }}
+            >Sign Up</button>
+          </div>
+
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            style={{ width: '100%', padding: '0.75rem', borderRadius: 8, border: '1px solid #d1d5db', marginBottom: '0.75rem', boxSizing: 'border-box', fontSize: '1rem' }}
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            style={{ width: '100%', padding: '0.75rem', borderRadius: 8, border: '1px solid #d1d5db', marginBottom: '1rem', boxSizing: 'border-box', fontSize: '1rem' }}
+          />
+
+          {authError && (
+            <div style={{ color: '#dc2626', fontSize: '0.9rem', marginBottom: '0.75rem' }}>{authError}</div>
+          )}
+
+          <button
+            onClick={handleAuth}
+            disabled={authLoading}
+            style={{
+              width: '100%', padding: '0.75rem', borderRadius: 8, border: 'none',
+              background: '#16a34a', color: 'white', fontSize: '1rem',
+              cursor: authLoading ? 'not-allowed' : 'pointer', fontWeight: 'bold'
+            }}
+          >
+            {authLoading ? 'Please wait...' : authMode === 'login' ? 'Login' : 'Sign Up'}
+          </button>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main style={{ maxWidth: 600, margin: '0 auto', padding: '2rem', fontFamily: 'sans-serif' }}>
-      <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>🛒 CartWise</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+        <h1 style={{ fontSize: '2rem', fontWeight: 'bold' }}>🛒 CartWise</h1>
+        <div style={{ textAlign: 'right' }}>
+          <p style={{ fontSize: '0.8rem', color: '#666', margin: 0 }}>{user.email}</p>
+          <button onClick={handleSignOut} style={{ fontSize: '0.8rem', color: '#dc2626', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>Sign out</button>
+        </div>
+      </div>
       <p style={{ color: '#666', marginBottom: '2rem' }}>Upload a receipt to find cheaper prices nearby</p>
 
       <div style={{
