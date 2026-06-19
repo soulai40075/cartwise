@@ -5,6 +5,7 @@ export async function POST(request) {
   try {
     const formData = await request.formData();
     const image = formData.get('image');
+    const userId = formData.get('userId');
 
     if (!image) {
       return Response.json({ error: 'No image provided' }, { status: 400 });
@@ -46,7 +47,7 @@ export async function POST(request) {
       return Response.json({ error: 'No event ID', detail: submitData }, { status: 500 });
     }
 
-    // Step 3 — stream result from server side
+    // Step 3 — stream result
     const resultRes = await fetch(
       `https://soulai40075-receipt-ocr-pipeline.hf.space/gradio_api/call/process_receipt/${eventId}`
     );
@@ -68,8 +69,31 @@ export async function POST(request) {
           try {
             const resultData = JSON.parse(raw);
             if (Array.isArray(resultData) && resultData.length >= 2) {
-              const jsonStr = resultData[1];
-              const parsed = JSON.parse(jsonStr);
+              const parsed = JSON.parse(resultData[1]);
+
+              // Step 4 — save to Supabase with user_id
+              if (userId && parsed.items?.length) {
+                const { createClient } = await import('@supabase/supabase-js');
+                const supabase = createClient(
+                  process.env.NEXT_PUBLIC_SUPABASE_URL,
+                  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+                );
+
+                const rows = parsed.items.map(item => ({
+                  user_id: userId,
+                  store_name: parsed.store_name,
+                  store_address: parsed.store_address,
+                  date: parsed.date,
+                  time: parsed.time,
+                  item_name: item.name,
+                  unit_price: item.unit_price,
+                  price_type: item.price_type,
+                  quantity: item.quantity
+                }));
+
+                await supabase.from('receipts').insert(rows);
+              }
+
               return Response.json(parsed);
             }
           } catch {

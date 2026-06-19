@@ -77,6 +77,7 @@ export default function Home() {
     try {
       const formData = new FormData();
       formData.append('image', image);
+      if (user?.id) formData.append('userId', user.id);
       const res = await fetch('/api/scan-receipt', { method: 'POST', body: formData });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Something went wrong');
