@@ -15,7 +15,9 @@ export default function Home() {
   const [authMode, setAuthMode] = useState('login');
   const [authError, setAuthError] = useState(null);
   const [authLoading, setAuthLoading] = useState(false);
-
+  const [comparisons, setComparisons] = useState({});
+  const [comparingItem, setComparingItem] = useState(null);
+  
   useEffect(() => {
     const supabase = createClient();
     if (!supabase) { setAuthReady(true); return; }
@@ -68,7 +70,23 @@ export default function Home() {
     setResult(null);
     setError(null);
   }
-
+  
+  async function handleCompare(itemName) {
+  setComparingItem(itemName);
+  try {
+    const res = await fetch('/api/compare-prices', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ itemName }),
+    });
+    const data = await res.json();
+    setComparisons(prev => ({ ...prev, [itemName]: data.summary || data.error }));
+  } catch (err) {
+    setComparisons(prev => ({ ...prev, [itemName]: 'Error fetching prices' }));
+  } finally {
+    setComparingItem(null);
+  }
+}
   async function handleSubmit() {
     if (!image) return;
     setLoading(true);
@@ -178,8 +196,30 @@ export default function Home() {
             <tbody>
               {(result.items || []).map((item, i) => (
                 <tr key={i} style={{ borderBottom: '1px solid #dcfce7' }}>
-                  <td style={{ padding: '0.5rem 0' }}>{item.name}</td>
-                  <td style={{ textAlign: 'right', padding: '0.5rem 0' }}>
+                  <td style={{ padding: '0.5rem 0' }}>
+                    <div>{item.name}</div>
+                    <button
+                      onClick={() => handleCompare(item.name)}
+                      disabled={comparingItem === item.name}
+                      style={{
+                        fontSize: '0.75rem', color: '#16a34a', background: 'none',
+                        border: '1px solid #16a34a', borderRadius: 4, padding: '2px 8px',
+                        cursor: comparingItem === item.name ? 'not-allowed' : 'pointer',
+                        marginTop: 4
+                      }}
+                    >
+                      {comparingItem === item.name ? 'Searching...' : 'Find cheaper'}
+                    </button>
+                    {comparisons[item.name] && (
+                      <pre style={{
+                        fontSize: '0.75rem', background: '#f0fdf4', padding: '0.5rem',
+                        borderRadius: 4, marginTop: 4, whiteSpace: 'pre-wrap', color: '#166534'
+                      }}>
+                        {comparisons[item.name]}
+                      </pre>
+                    )}
+                  </td>
+                  <td style={{ textAlign: 'right', padding: '0.5rem 0', verticalAlign: 'top' }}>
                     {item.unit_price != null
                       ? `$${item.unit_price.toFixed(2)}${item.price_type && item.price_type !== 'each' ? '/' + item.price_type.replace('per_', '') : ''}`
                       : 'N/A'}
