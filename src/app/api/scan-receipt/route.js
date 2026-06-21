@@ -6,6 +6,7 @@ export async function POST(request) {
     const formData = await request.formData();
     const image = formData.get('image');
     const userId = formData.get('userId');
+    console.log('userId received:', userId);
 
     if (!image) {
       return Response.json({ error: 'No image provided' }, { status: 400 });
