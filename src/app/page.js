@@ -78,6 +78,9 @@ export default function Home() {
       const formData = new FormData();
       formData.append('image', image);
       if (user?.id) formData.append('userId', user.id);
+      const supabase = createClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.access_token) formData.append('accessToken', session.access_token);
       console.log('Sending userId:', user?.id); // temporary debug
       
       const res = await fetch('/api/scan-receipt', {

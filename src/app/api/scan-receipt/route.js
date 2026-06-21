@@ -6,6 +6,7 @@ export async function POST(request) {
     const formData = await request.formData();
     const image = formData.get('image');
     const userId = formData.get('userId');
+    const accessToken = formData.get('accessToken');
     console.log('userId received:', userId);
 
     if (!image) {
@@ -77,7 +78,12 @@ export async function POST(request) {
                 const { createClient } = await import('@supabase/supabase-js');
                 const supabase = createClient(
                   process.env.NEXT_PUBLIC_SUPABASE_URL,
-                  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+                  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+                  {
+                    global: {
+                      headers: { Authorization: `Bearer ${accessToken}` }
+                    }
+                  }
                 );
 
                 const rows = parsed.items.map(item => ({
