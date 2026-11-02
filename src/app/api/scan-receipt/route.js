@@ -22,6 +22,18 @@ export async function POST(request) {
       throw new Error('Hugging Face API token not configured. Please set HF_TOKEN environment variable.');
     }
 
+    // Optional: test outbound connectivity to a known service
+    try {
+      const connectivityTest = await fetch('https://httpbin.org/ip', { timeout: 5000 });
+      if (!connectivityTest.ok) {
+        console.warn('Outbound connectivity test failed:', connectivityTest.status);
+      } else {
+        console.log('Outbound connectivity OK');
+      }
+    } catch (connErr) {
+      console.warn('Outbound connectivity test error:', connErr.message);
+    }
+
     // Call Hugging Face Inference API for OCR
     const hfResponse = await fetch(
       'https://api-inference.huggingface.co/models/microsoft/trocr-base-printed',
