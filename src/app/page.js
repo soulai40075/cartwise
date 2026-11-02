@@ -13,6 +13,7 @@ export default function Home() {
     tripsSaved: 0,
     mealsPlanned: 0
   });
+  const [notificationCount, setNotificationCount] = useState(0);
 
   useEffect(() => {
     const supabase = createClient();
@@ -177,20 +178,20 @@ export default function Home() {
         <h2 className="sr-only">Dashboard Statistics</h2>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 pt-5 pb-12">
           {/* Total Saved */}
-          <div className="bg-white overflow-hidden shadow rounded-lg">
+          <div className="bg-gradient-to-r from-green-500 to-emerald-600 overflow-hidden shadow rounded-lg">
             <div className="px-4 py-5 sm:p-6">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <div className="h-10 w-10 flex items-center justify-center bg-green-100 rounded-md">
-                    <svg className="h-5 w-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="h-10 w-10 flex items-center justify-center bg-white rounded-md">
+                    <svg className="h-5 w-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 2a.5.5 0 01-.35-.146L8 12l-2-2a.5.5 0 11.707-.707L9 10.293l2.646-2.647a.5.5 0 01.707.708L11 12l2 2a.5.5 0 01-.707.708L11 12.707z" />
                     </svg>
                   </div>
                 </div>
                 <div className="ml-4 w-0 flex-1">
                   <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">Total Saved</dt>
-                    <dd className="mt-1 text-2xl font-extrabold text-gray-900">${stats.totalSaved.toFixed(2)}</dd>
+                    <dt className="text-sm font-medium text-white truncate">Total Saved</dt>
+                    <dd className="mt-1 text-2xl font-extrabold text-white">${stats.totalSaved.toFixed(2)}</dd>
                   </dl>
                 </div>
               </div>
@@ -219,20 +220,20 @@ export default function Home() {
           </div>
 
           {/* Trips Saved */}
-          <div className="bg-white overflow-hidden shadow rounded-lg">
+          <div className="bg-gradient-to-r from-purple-500 to-pink-600 overflow-hidden shadow rounded-lg">
             <div className="px-4 py-5 sm:p-6">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <div className="h-10 w-10 flex items-center justify-center bg-purple-100 rounded-md">
-                    <svg className="h-5 w-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="h-10 w-10 flex items-center justify-center bg-white rounded-md">
+                    <svg className="h-5 w-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
                   </div>
                 </div>
                 <div className="ml-4 w-0 flex-1">
                   <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">Trips Saved</dt>
-                    <dd className="mt-1 text-2xl font-extrabold text-gray-900">{stats.tripsSaved}</dd>
+                    <dt className="text-sm font-medium text-white truncate">Trips Saved</dt>
+                    <dd className="mt-1 text-2xl font-extrabold text-white">{stats.tripsSaved}</dd>
                   </dl>
                 </div>
               </div>
@@ -240,20 +241,20 @@ export default function Home() {
           </div>
 
           {/* Meals Planned */}
-          <div className="bg-white overflow-hidden shadow rounded-lg">
+          <div className="bg-gradient-to-r from-indigo-500 to-purple-600 overflow-hidden shadow rounded-lg">
             <div className="px-4 py-5 sm:p-6">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <div className="h-10 w-10 flex items-center justify-center bg-indigo-100 rounded-md">
-                    <svg className="h-5 w-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="h-10 w-10 flex items-center justify-center bg-white rounded-md">
+                    <svg className="h-5 w-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" />
                     </svg>
                   </div>
                 </div>
                 <div className="ml-4 w-0 flex-1">
                   <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">Meals Planned</dt>
-                    <dd className="mt-1 text-2xl font-extrabold text-gray-900">{stats.mealsPlanned}</dd>
+                    <dt className="text-sm font-medium text-white truncate">Meals Planned</dt>
+                    <dd className="mt-1 text-2xl font-extrabold text-white">{stats.mealsPlanned}</dd>
                   </dl>
                 </div>
               </div>

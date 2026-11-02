@@ -310,7 +310,10 @@ export default function TripCalculatorPage() {
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 flex items-center space-x-2">
+              <Link href="/" className="text-sm text-gray-500 hover:text-gray-700">
+                ← Back
+              </Link>
               <h1 className="text-2xl font-bold text-gray-900 flex items-center">
                 <svg className="h-5 w-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l3 3 4-4M5 7.416A11.941 11.941 0 0112 4c2.07 0 4.05.5 5.8 1.416M5 19.416A11.941 11.941 0 0012 20c2.07 0 4.05-.5 5.8-1.416" />

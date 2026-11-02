@@ -24,6 +24,18 @@ export default function MapPage() {
   const [mapError, setMapError] = useState(null);
   const router = useRouter();
 
+  const generateStaticMapUrl = ({ latitude, longitude }) => {
+    // Base URL for OpenStreetMap static map
+    const baseUrl = 'https://staticmap.openstreetmap.de/staticmap.php';
+    const params = new URLSearchParams({
+      center: `${latitude},${longitude}`,
+      zoom: '14',
+      size: '600x400',
+      markers: `${latitude},${longitude},red-pushpin`,
+    });
+    return `${baseUrl}?${params.toString()}`;
+  };
+
   useEffect(() => {
     const supabase = createClient();
     if (!supabase) { setReadyState(true); return; }
@@ -262,7 +274,10 @@ export default function MapPage() {
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 flex items-center space-x-2">
+              <Link href="/" className="text-sm text-gray-500 hover:text-gray-700">
+                ← Back
+              </Link>
               <h1 className="text-2xl font-bold text-gray-900 flex items-center">
                 <svg className="h-5 w-5 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -377,16 +392,13 @@ export default function MapPage() {
                 </div>
               ) : (
                 <>
-                  {/* Map using OpenStreetMap */}
+                  {/* Static Map using OpenStreetMap */}
                   <div className="relative overflow-hidden rounded-lg mb-6">
-                    <iframe
+                    <img
+                      alt="Map centered at your location"
+                      src={generateStaticMapUrl(userLocation)}
                       width="100%"
                       height="400"
-                      frameborder="0"
-                      scrolling="no"
-                      marginHeight="0"
-                      marginWidth="0"
-                      src={`https://www.openstreetmap.org/export/embed.html?bbox=${userLocation.longitude - 0.01}%2C${userLocation.latitude - 0.01}%2C${userLocation.longitude + 0.01}%2C${userLocation.latitude + 0.01}&layer=mapnik&marker=${userLocation.latitude}%2C${userLocation.longitude}`}
                       style={{ border: '1px solid #ccc' }}
                     />
                     <div className="absolute bottom-0 left-0 right-0 p-2 text-xs text-gray-500">
