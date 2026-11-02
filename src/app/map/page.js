@@ -22,6 +22,7 @@ export default function MapPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [userLocation, setUserLocation] = useState(null);
   const [mapError, setMapError] = useState(null);
+  const [notificationCount, setNotificationCount] = useState(0);
   const router = useRouter();
 
   const generateStaticMapUrl = ({ latitude, longitude }) => {
@@ -77,6 +78,35 @@ export default function MapPage() {
         setMapError(`Unable to retrieve your location: ${error.message}`);
       }
     );
+  }, []);
+
+  // Simulate fetching notifications (in a real app, this would come from a notifications table/database)
+  useEffect(() => {
+    const supabase = createClient();
+    if (!supabase) return;
+
+    // Simulate getting notification count - in a real app, you'd query a notifications table
+    // For now, we'll set it to 3 to simulate having notifications
+    setNotificationCount(3);
+
+    // Alternative: Uncomment below to fetch from a real notifications table if it exists
+    /*
+    supabase
+      .from('notifications')
+      .select('id', { count: 'exact' })
+      .eq('user_id', userId)
+      .eq('read', false)
+      .then(({ data, error }) => {
+        if (!error && data) {
+          setNotificationCount(data.length);
+        }
+      })
+      .catch(err => {
+        console.error('Error fetching notifications:', err);
+        // Fallback to simulated count
+        setNotificationCount(Math.floor(Math.random() * 5)); // Random 0-4
+      });
+    */
   }, []);
 
   const handleAuth = async () => {
@@ -303,6 +333,25 @@ export default function MapPage() {
                   </svg>
                 </Link>
               )}
+              {/* Notifications Button */}
+              <button onClick={() => {
+                alert(`You have ${notificationCount} new notifications!`);
+                // In a real app, this would open a notifications panel/drawer
+                setNotificationCount(0); // Clear notifications when viewed
+              }}
+                className="ml-3 flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 relative"
+              >
+                <span className="mr-2">Notifications</span>
+                {notificationCount > 0 && (
+                  <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center bg-red-500 text-xs font-bold text-white rounded-full">
+                    {notificationCount > 9 ? '9+' : notificationCount}
+                  </span>
+                )}
+                <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10.293 3.293a1 1 0 00-1.414-1.414L8 5.414V13a1 1 0 002 0V5.414L8.293 7.707a1 1 0 000-1.414l6-6z" clipRule="evenodd" />
+                  <path fillRule="evenodd" d="M4 9h2v7H4V9zm4 0h2v7h-2V9z" clipRule="evenodd" />
+                </svg>
+              </button>}
               <button onClick={() => {
                 const supabase = createClient();
                 if (supabase) {

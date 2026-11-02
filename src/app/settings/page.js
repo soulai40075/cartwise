@@ -21,6 +21,7 @@ export default function SettingsPage() {
   const [authMode, setAuthMode] = useState('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [notificationCount, setNotificationCount] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
@@ -69,6 +70,35 @@ export default function SettingsPage() {
     });
 
     return () => listener?.subscription?.unsubscribe();
+  }, []);
+
+  // Simulate fetching notifications (in a real app, this would come from a notifications table/database)
+  useEffect(() => {
+    const supabase = createClient();
+    if (!supabase) return;
+
+    // Simulate getting notification count - in a real app, you'd query a notifications table
+    // For now, we'll set it to 3 to simulate having notifications
+    setNotificationCount(3);
+
+    // Alternative: Uncomment below to fetch from a real notifications table if it exists
+    /*
+    supabase
+      .from('notifications')
+      .select('id', { count: 'exact' })
+      .eq('user_id', userId)
+      .eq('read', false)
+      .then(({ data, error }) => {
+        if (!error && data) {
+          setNotificationCount(data.length);
+        }
+      })
+      .catch(err => {
+        console.error('Error fetching notifications:', err);
+        // Fallback to simulated count
+        setNotificationCount(Math.floor(Math.random() * 5)); // Random 0-4
+      });
+    */
   }, []);
 
   const handleAuth = async () => {
@@ -410,6 +440,20 @@ export default function SettingsPage() {
                   </svg>
                 </Link>
               )}
+              {/* Notifications Button */}
+              <div className="mr-3 flex items-center">
+                <button className="relative flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" aria-label="Notifications">
+                  <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0v3h16v-3zm-1-4a1 1 0 00-2 0v1H7v-1a1 1 0 00-2 0v1h3a1 1 0 001 1v2a1 1 0 002 0v-2h3a1 1 0 001-1v-2a1 1 0 00-2-0v1H9v-1z" clipRule="evenodd" />
+                  </svg>
+                  {notificationCount > 0 && (
+                    <span className="absolute -top-1 -right-1 flex h-2 w-2 items-center justify-center rounded-full bg-red-600 text-xs font-medium text-white">
+                      {notificationCount}
+                    </span>
+                  )}
+                </button>
+              </div>
+
               <button onClick={handleSignOut}
                 className="ml-3 flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >

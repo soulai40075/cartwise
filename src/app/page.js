@@ -85,6 +85,35 @@ export default function Home() {
     }
   };
 
+  // Simulate fetching notifications (in a real app, this would come from a notifications table/database)
+  useEffect(() => {
+    const supabase = createClient();
+    if (!supabase) return;
+
+    // Simulate getting notification count - in a real app, you'd query a notifications table
+    // For now, we'll set it to 3 to simulate having notifications
+    setNotificationCount(3);
+
+    // Alternative: Uncomment below to fetch from a real notifications table if it exists
+    /*
+    supabase
+      .from('notifications')
+      .select('id', { count: 'exact' })
+      .eq('user_id', userId)
+      .eq('read', false)
+      .then(({ data, error }) => {
+        if (!error && data) {
+          setNotificationCount(data.length);
+        }
+      })
+      .catch(err => {
+        console.error('Error fetching notifications:', err);
+        // Fallback to simulated count
+        setNotificationCount(Math.floor(Math.random() * 5)); // Random 0-4
+      });
+    */
+  }, []);
+
   if (!authReady) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center bg-gray-50">
@@ -154,6 +183,27 @@ export default function Home() {
                   <path fillRule="evenodd" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573-1.066c-.94-1.543.826-3.31 2.37-2.37a1.724 1.724 0 001.066-2.573z" />
                 </svg>
               </Link>
+
+              {/* Notifications Button */}
+              <button onClick={() => {
+                alert(`You have ${notificationCount} new notifications!`);
+                // In a real app, this would open a notifications panel/drawer
+                setNotificationCount(0); // Clear notifications when viewed
+              }}
+                className="ml-3 flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 relative"
+              >
+                <span className="mr-2">Notifications</span>
+                {notificationCount > 0 && (
+                  <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center bg-red-500 text-xs font-bold text-white rounded-full">
+                    {notificationCount > 9 ? '9+' : notificationCount}
+                  </span>
+                )}
+                <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L14 5.414V13a1 1 0 01-2 0V5.414L8.293 7.707a1 1 0 010-1.414l6-6z" clipRule="evenodd" />
+                  <path fillRule="evenodd" d="M4 9h2v7H4V9zm4 0h2v7H8V9zm4 0h2v7h-2V9z" clipRule="evenodd" />
+                </svg>
+              </button>
+
               <button onClick={() => {
                 const supabase = createClient();
                 if (supabase) {
@@ -199,20 +249,20 @@ export default function Home() {
           </div>
 
           {/* Time Saved */}
-          <div className="bg-white overflow-hidden shadow rounded-lg">
+          <div className="bg-gradient-to-r from-blue-500 to-indigo-600 overflow-hidden shadow rounded-lg">
             <div className="px-4 py-5 sm:p-6">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <div className="h-10 w-10 flex items-center justify-center bg-blue-100 rounded-md">
-                    <svg className="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="h-10 w-10 flex items-center justify-center bg-white rounded-md">
+                    <svg className="h-5 w-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
                   </div>
                 </div>
                 <div className="ml-4 w-0 flex-1">
                   <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">Time Saved</dt>
-                    <dd className="mt-1 text-2xl font-extrabold text-gray-900">{stats.timeSaved} min</dd>
+                    <dt className="text-sm font-medium text-white truncate">Time Saved</dt>
+                    <dd className="mt-1 text-2xl font-extrabold text-white">{stats.timeSaved} min</dd>
                   </dl>
                 </div>
               </div>
@@ -258,6 +308,29 @@ export default function Home() {
                   </dl>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Savings Opportunity (Moved to prominent location) */}
+      <div className="bg-white overflow-hidden shadow rounded-lg">
+        <div className="px-4 py-5 sm:p-6">
+          <div className="flex items-center space-x-4">
+            <div className="flex-shrink-0">
+              <div className="h-10 w-10 flex items-center justify-center bg-green-100 rounded-md">
+                <svg className="h-5 w-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.758 0 3.42 3.42 0 001.946.806 3.42 3.42 0 014.758 0 3.42 3.42 0 001.946.806 3.42 3.42 0 014.758 0V5a1 1 0 00-1-1H2a1 1 0 001 1v14a1 1 0 001 1h3.5a1 1 0 001 1v2a1 1 0 001 1h4a1 1 0 001 1v-1.5a1 1 0 00-1-1H3a1 1 0 00-1-1V6a1 1 0 001-1h3.5a1 1 0 001-1V4.697z" />
+                </svg>
+              </div>
+            </div>
+            <div className="min-w-0 flex-1">
+              <h3 className="text-sm font-medium text-gray-900">
+                New savings opportunity found!
+              </h3>
+              <p className="mt-1 text-sm text-gray-500">
+                You could save $2.50 on milk at Store B vs Store A
+              </p>
             </div>
           </div>
         </div>
@@ -437,12 +510,7 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="min-w-0 flex-1">
-                    <h3 className="text-sm font-medium text-gray-900">
-                      New savings opportunity found!
-                    </h3>
-                    <p className="mt-1 text-sm text-gray-500">
-                      You could save $2.50 on milk at Store B vs Store A
-                    </p>
+                    <!-- Savings opportunity moved to stats overview for prominence -->
                   </div>
                 </div>
               </div>
