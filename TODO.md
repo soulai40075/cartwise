@@ -164,6 +164,8 @@ npm run start
 - src/app/meal-planner/page.js
 - src/app/scan/page.js
 - src/app/settings/page.js
+- src/app/login/page.js (NEW)
+- src/app/signup/page.js (NEW)
 
 ### Files Verified Working:
 - src/app/trip-calculator/page.js (already correct)
