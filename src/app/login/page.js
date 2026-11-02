@@ -31,8 +31,8 @@ export default function LoginPage() {
 
       if (authError) throw authError;
 
-      // Refresh the route to update auth state
-      router.refresh();
+      // Redirect to home after successful sign-in
+      router.push('/');
     } catch (err) {
       setError(err.message);
     } finally {

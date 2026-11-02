@@ -8,14 +8,26 @@ import { useRouter } from 'next/navigation';
 export default function SignUpPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [favoriteStore, setFavoriteStore] = useState('');
+  const [values, setValues] = useState([]);
+  const [location, setLocation] = useState('');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  // Password validation regex: at least 8 chars, one uppercase, one lowercase, one number, one special char
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email || !password) {
-      setError('Please fill in all fields');
+    // Basic validation
+    if (!email || !password || !name) {
+      setError('Please fill in all required fields');
+      return;
+    }
+    if (!passwordRegex.test(password)) {
+      setError('Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&)');
       return;
     }
 
@@ -27,15 +39,31 @@ export default function SignUpPage() {
       const { error: authError } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          data: {
+            full_name: name,
+            favorite_store: favoriteStore,
+            values: values,
+            location: location,
+          }
+        }
       });
 
       if (authError) throw authError;
 
-      // Show success message and redirect to login
-      setError('Please check your email to confirm your account!');
-      setLoading(false);
+      // Show success message and redirect to login after a short delay
+      setError('Account created! Please check your email to confirm your account.');
+      // Redirect to login after 3 seconds
+      setTimeout(() => {
+        router.push('/login');
+      }, 3000);
     } catch (err) {
-      setError(err.message);
+      // Handle duplicate email error from Supabase
+      if (err.message.includes('duplicate')) {
+        setError('An account with this email already exists. Please try logging in.');
+      } else {
+        setError(err.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -75,7 +103,21 @@ export default function SignUpPage() {
           <div className="bg-white overflow-hidden shadow rounded-lg mb-6">
             <div className="px-4 py-5 sm:p-6">
               <h2 className="text-lg font-medium text-gray-900 mb-4">Sign Up</h2>
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                    Full Name
+                  </label>
+                  <input
+                    id="name"
+                    type="text"
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  />
+                </div>
+
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                     Email
@@ -102,6 +144,98 @@ export default function SignUpPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   />
+                  <p className="mt-1 text-xs text-gray-500">
+                    Must be at least 8 characters with uppercase, lowercase, number, and special character (@$!%*?&)
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="favoriteStore" className="block text-sm font-medium text-gray-700 mb-1">
+                    Favorite Store
+                  </label>
+                  <select
+                    id="favoriteStore"
+                    value={favoriteStore}
+                    onChange={(e) => setFavoriteStore(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  >
+                    <option value="">Select a store</option>
+                    <option value="walmart">Walmart</option>
+                    <option value="target">Target</option>
+                    <option value="kroger">Kroger</option>
+                    <option value="costco">Costco</option>
+                    <option value="aldi">Aldi</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Values (check all that apply)
+                  </label>
+                  <div className="space-y-1">
+                    <label className="flex items-start">
+                      <input
+                        type="checkbox"
+                        checked={values.includes('eco-friendly')}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setValues([...values, 'eco-friendly']);
+                          } else {
+                            setValues(values.filter(v => v !== 'eco-friendly'));
+                          }
+                        }}
+                        className="h-4 w-4 text-indigo-600 focus:ring-indigo-500"
+                        aria-label="Eco-friendly"
+                      />
+                      <span className="ml-2 text-sm text-gray-700">Eco-friendly</span>
+                    </label>
+                    <label className="flex items-start">
+                      <input
+                        type="checkbox"
+                        checked={values.includes('budget')}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setValues([...values, 'budget']);
+                          } else {
+                            setValues(values.filter(v => v !== 'budget'));
+                          }
+                        }}
+                        className="h-4 w-4 text-indigo-600 focus:ring-indigo-500"
+                        aria-label="Budget-conscious"
+                      />
+                      <span className="ml-2 text-sm text-gray-700">Budget-conscious</span>
+                    </label>
+                    <label className="flex items-start">
+                      <input
+                        type="checkbox"
+                        checked={values.includes('convenience')}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setValues([...values, 'convenience']);
+                          } else {
+                            setValues(values.filter(v => v !== 'convenience'));
+                          }
+                        }}
+                        className="h-4 w-4 text-indigo-600 focus:ring-indigo-500"
+                        aria-label="Convenience-focused"
+                      />
+                      <span className="ml-2 text-sm text-gray-700">Convenience-focused</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div>
+                  <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-1">
+                    Location (City)
+                  </label>
+                  <input
+                    id="location"
+                    type="text"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  />
                 </div>
 
                 {error && (
@@ -115,7 +249,7 @@ export default function SignUpPage() {
                   disabled={loading}
                   className="w-full flex items-center justify-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg shadow-md transition-all transform hover:scale-105"
                 >
-                  {loading ? 'Signing up...' : 'Sign Up'}
+                  {loading ? 'Creating account...' : 'Sign Up'}
                 </button>
               </form>
 
