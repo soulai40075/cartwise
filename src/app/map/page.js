@@ -20,6 +20,8 @@ export default function MapPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [userLocation, setUserLocation] = useState(null);
+  const [mapError, setMapError] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -42,6 +44,27 @@ export default function MapPage() {
     });
 
     return () => listener?.subscription?.unsubscribe();
+  }, []);
+
+  // Get user location
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      setMapError('Geolocation is not supported by your browser');
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        });
+        setMapError(null);
+      },
+      (error) => {
+        setMapError(`Unable to retrieve your location: ${error.message}`);
+      }
+    );
   }, []);
 
   const handleAuth = async () => {
@@ -265,14 +288,6 @@ export default function MapPage() {
                   </svg>
                 </Link>
               )}
-              <button onClick={window.toggleCartwiseDarkMode}
-                className="ml-3 flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                <span className="sr-only">Toggle dark mode</span>
-                <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M9 3.5a5.5 5.5 0 11-3.071 9.807l1.414-1.414A3.5 3.5 0 0012.943 9.95l1.414-1.414A5.5 5.5 0 019 3.5z" />
-                </svg>
-              </button>
               <button onClick={() => {
                 const supabase = createClient();
                 if (supabase) {
@@ -350,18 +365,32 @@ export default function MapPage() {
                 <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
                   <p className="text-sm text-red-600">{error}</p>
                 </div>
-              ) : stores.length === 0 ? (
+              ) : mapError ? (
+                <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-sm text-red-600">{mapError}</p>
+                </div>
+              ) : !userLocation ? (
                 <div className="text-center py-8">
-                  <p className="text-gray-500">No stores found in your area</p>
+                  <p className="text-gray-500">
+                    Unable to detect your location. Please ensure location services are enabled and try again.
+                  </p>
                 </div>
               ) : (
                 <>
-                  {/* Map placeholder - would be actual map in production */}
-                  <div className="h-96 bg-gray-200 rounded-lg mb-4 relative overflow-hidden">
-                    <div className="absolute inset-0 flex items-center justify-center text-gray-500">
-                      Map visualization would appear here
-                      <br />
-                      <span className="text-xs">(Integrate with Google Maps or Mapbox)</span>
+                  {/* Map using OpenStreetMap */}
+                  <div className="relative overflow-hidden rounded-lg mb-6">
+                    <iframe
+                      width="100%"
+                      height="400"
+                      frameborder="0"
+                      scrolling="no"
+                      marginHeight="0"
+                      marginWidth="0"
+                      src={`https://www.openstreetmap.org/export/embed.html?bbox=${userLocation.longitude - 0.01}%2C${userLocation.latitude - 0.01}%2C${userLocation.longitude + 0.01}%2C${userLocation.latitude + 0.01}&layer=mapnik&marker=${userLocation.latitude}%2C${userLocation.longitude}`}
+                      style={{ border: '1px solid #ccc' }}
+                    />
+                    <div className="absolute bottom-0 left-0 right-0 p-2 text-xs text-gray-500">
+                      Map data © OpenStreetMap contributors
                     </div>
                   </div>
 

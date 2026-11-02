@@ -1,6 +1,6 @@
 # CartWise Application - TODO List
 
-## ✅ COMPLETED - Build Fixes
+## ✅ COMPLETED - Build Fixes & UI Improvements
 All build errors have been fixed and `npm run build` now succeeds:
 
 ### Fixed Files:
@@ -8,25 +8,71 @@ All build errors have been fixed and `npm run build` now succeeds:
    - Added missing auth state variables: `authError`, `authLoading`, `authMode`, `email`, `password`
    - Added missing `handleAuth` function
    - Fixed variable name references (was referencing undeclared variables)
+   - **UI Improvements:**
+     - Conditional header: Shows Settings link when signed in, Dashboard when not
+     - Added dark mode toggle button
+     - Added separate sign-out button
+     - Implemented show-password toggle for password fields
 
 2. **src/app/map/page.js**
    - Added missing auth state variables: `authError`, `authLoading`, `authMode`, `email`, `password`
    - Added missing `handleAuth` function
    - Fixed variable name references
+   - **UI Improvements:**
+     - Conditional header: Shows Settings link when signed in, Dashboard when not
+     - Added dark mode toggle button
+     - Added separate sign-out button
+     - Implemented show-password toggle for password fields
 
 3. **src/app/scan/page.js**
    - Fixed incorrect reference: changed `if (!readyState)` to `if (!authReadyState)`
    - (Already had correct auth state variables and handleAuth function)
+   - **UI Improvements:**
+     - Conditional header: Shows Settings link when signed in, Dashboard when not
+     - Added dark mode toggle button
+     - Added separate sign-out button (using handleSignOut function)
+     - Implemented show-password toggle for password fields
 
 4. **src/app/meal-planner/page.js**
    - Added missing auth state variables: `authError`, `authLoading`, `authMode`, `email`, `password`
    - Added missing `handleAuth` function
    - Fixed variable name references
+   - **UI Improvements:**
+     - Conditional header: Shows Settings link when signed in, Dashboard when not
+     - Added dark mode toggle button
+     - Added separate sign-out button
+     - Implemented show-password toggle for password fields
 
 5. **src/app/settings/page.js**
    - Added missing auth state variables: `authError`, `authLoading`, `authMode`, `email`, `password`
    - Added missing `handleAuth` function
    - Fixed variable name references
+   - **UI Improvements:**
+     - Conditional header: Shows Settings link when signed in, Dashboard when not
+     - Added dark mode toggle button
+     - Added separate sign-out button
+     - Implemented show-password toggle for password fields
+
+6. **src/app/page.js** (Home page)
+   - Fixed JSX syntax error (extra closing div tag)
+   - **UI Improvements:**
+     - Conditional header: Shows Settings link when signed in, Dashboard when not
+     - Added dark mode toggle button
+     - Added separate sign-out button
+
+7. **src/app/login/page.js** (NEW)
+   - Complete login page with email/password sign-in
+   - Supabase auth integration with loading/error states
+   - Redirect to home on successful sign-in
+   - Show-password toggle for password field
+
+8. **src/app/signup/page.js** (NEW)
+   - Complete signup page with email/password sign-up
+   - Added name, favorite store, values, location fields
+   - Password validation (8+ chars, 1 uppercase, 1 number, 1 special char)
+   - Duplicate email prevention with proper error handling
+   - Redirect to login after account creation
+   - Show-password toggle for password field
 
 ### Verification:
 - `npm run build` compiles successfully

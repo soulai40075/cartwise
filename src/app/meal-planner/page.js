@@ -148,37 +148,100 @@ export default function MealPlannerPage() {
         item.item_name.toLowerCase().includes(d))
     );
 
+    const eggs = items.filter(item =>
+      item.item_name.toLowerCase().includes('egg')
+    );
+
+    const bread = items.filter(item =>
+      item.item_name.toLowerCase().includes('bread')
+    );
+
+    const fruit = items.filter(item =>
+      ['apple', 'banana', 'orange', 'berry', 'grape', 'peach', 'pear'].some(f =>
+        item.item_name.toLowerCase().includes(f))
+    );
+
     // Create simple meal combinations
-    const meals = [
-      {
+    const meals = [];
+
+    // Breakfast
+    const breakfastItems = [];
+    if (eggs.length > 0) {
+      breakfastItems.push({name: 'Eggs', quantity: eggs.length >= 2 ? 2 : eggs.length});
+    }
+    if (bread.length > 0) {
+      breakfastItems.push({name: 'Bread', quantity: `${Math.min(2, bread.length)} slices`});
+    }
+    if (fruit.length > 0) {
+      breakfastItems.push({name: 'Fruit', quantity: '1 serving'});
+    }
+    if (breakfastItems.length > 0) {
+      meals.push({
         name: 'Breakfast',
-        items: [
-          ...(eggs.length > 0 ? [{name: 'Eggs', quantity: 2}] : []),
-          ...(bread.length > 0 ? [{name: 'Bread', quantity: '2 slices'}] : []),
-          ...(fruit.length > 0 ? [{name: 'Fruit', quantity: '1 serving'}] : [])
-        ],
-        estimatedCost: calculateCost([...eggs, ...bread, ...fruit])
-      },
-      {
+        items: breakfastItems,
+        estimatedCost: calculateCost(breakfastItems.map(i => ({estimated_price_cents: i.estimated_price_cents})))
+      });
+    }
+
+    // Lunch
+    const lunchItems = [];
+    if (proteins.length > 0) {
+      lunchItems.push({name: proteins[0].item_name, quantity: '4oz'});
+    }
+    if (vegetables.length > 0) {
+      lunchItems.push({name: vegetables[0].item_name, quantity: '1 cup'});
+    }
+    if (grains.length > 0) {
+      lunchItems.push({name: grains[0].item_name, quantity: '1/2 cup'});
+    }
+    if (lunchItems.length > 0) {
+      meals.push({
         name: 'Lunch',
-        items: [
-          ...(proteins.length > 0 ? [{name: proteins[0].item_name, quantity: '4oz'}] : []),
-          ...(vegetables.length > 0 ? [{name: vegetables[0].item_name, quantity: '1 cup'}] : []),
-          ...(grains.length > 0 ? [{name: grains[0].item_name, quantity: '1/2 cup'}] : [])
-        ],
-        estimatedCost: calculateCost([...proteins.slice(0,1), ...vegetables.slice(0,1), ...grains.slice(0,1)])
-      },
-      {
+        items: lunchItems,
+        estimatedCost: calculateCost(lunchItems.map(i => ({estimated_price_cents: i.estimated_price_cents})))
+      });
+    }
+
+    // Dinner
+    const dinnerItems = [];
+    if (proteins.length > 1) {
+      dinnerItems.push({name: proteins[1].item_name, quantity: '4oz'});
+    } else if (proteins.length > 0) {
+      dinnerItems.push({name: proteins[0].item_name, quantity: '4oz'});
+    }
+    if (vegetables.length > 1) {
+      dinnerItems.push({name: vegetables[1].item_name, quantity: '1 cup'});
+    } else if (vegetables.length > 0) {
+      dinnerItems.push({name: vegetables[0].item_name, quantity: '1 cup'});
+    }
+    if (grains.length > 1) {
+      dinnerItems.push({name: grains[1].item_name, quantity: '1/2 cup'});
+    } else if (grains.length > 0) {
+      dinnerItems.push({name: grains[0].item_name, quantity: '1/2 cup'});
+    }
+    if (dairy.length > 0) {
+      dinnerItems.push({name: dairy[0].item_name, quantity: '1/2 cup'});
+    }
+    if (dinnerItems.length > 0) {
+      meals.push({
         name: 'Dinner',
-        items: [
-          ...(proteins.length > 1 ? [{name: proteins[1].item_name, quantity: '4oz'}] : []),
-          ...(vegetables.length > 1 ? [{name: vegetables[1].item_name, quantity: '1 cup'}] : []),
-          ...(grains.length > 1 ? [{name: grains[1].item_name, quantity: '1/2 cup'}] : []),
-          ...(dairy.length > 0 ? [{name: dairy[0].item_name, quantity: '1/2 cup'}] : [])
-        ],
-        estimatedCost: calculateCost([...proteins.slice(1,2), ...vegetables.slice(1,2), ...grains.slice(1,2), ...dairy.slice(0,1)])
-      }
-    ].filter(meal => meal.items.length > 0);
+        items: dinnerItems,
+        estimatedCost: calculateCost(dinnerItems.map(i => ({estimated_price_cents: i.estimated_price_cents})))
+      });
+    }
+
+    // Snack (optional)
+    const snackItems = [];
+    if (fruit.length > 1) {
+      snackItems.push({name: 'Fruit', quantity: '1 serving'});
+    }
+    if (snackItems.length > 0) {
+      meals.push({
+        name: 'Snack',
+        items: snackItems,
+        estimatedCost: calculateCost(snackItems.map(i => ({estimated_price_cents: i.estimated_price_cents})))
+      });
+    }
 
     return {
       date,
@@ -304,14 +367,6 @@ export default function MealPlannerPage() {
                   </svg>
                 </Link>
               )}
-              <button onClick={window.toggleCartwiseDarkMode}
-                className="ml-3 flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                <span className="sr-only">Toggle dark mode</span>
-                <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M9 3.5a5.5 5.5 0 11-3.071 9.807l1.414-1.414A3.5 3.5 0 0012.943 9.95l1.414-1.414A5.5 5.5 0 019 3.5z" />
-                </svg>
-              </button>
               <button onClick={() => {
                 const supabase = createClient();
                 if (supabase) {

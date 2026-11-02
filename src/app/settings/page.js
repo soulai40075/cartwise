@@ -304,7 +304,7 @@ export default function SettingsPage() {
           <div className="text-center space-y-6">
             <div className="w-20 h-20 bg-gradient-to-r from-gray-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto">
               <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-1.756.426-2.924.426-3.35 0a1.724 1.724 0 00-2.573 1.066c-.94-1.543.826-3.31 2.37-2.37a1.724 1.724 0 00-1.066-2.573c-.426-1.756-.426-2.924 0-3.35a1.724 1.724 0 001.066-2.573z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-1.756.426-2.924.426-3.35 0a1.724 1.724 0 00-2.573-1.066c-.94-1.543.826-3.31 2.37-2.37a1.724 1.724 0 001.066-2.573z" />
               </svg>
             </div>
             <h2 className="text-2xl font-bold text-foreground">Settings</h2>
@@ -387,7 +387,7 @@ export default function SettingsPage() {
             <div className="flex-1 min-w-0">
               <h1 className="text-2xl font-bold text-foreground flex items-center">
                 <svg className="h-5 w-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-1.756.426-2.924.426-3.35 0a1.724 1.724 0 00-2.573-1.066c-.94-1.543.826-3.31 2.37-2.37a1.724 1.724 0 00-1.066-2.573c-.426-1.756-.426-2.924 0-3.35a1.724 1.724 0 001.066-2.573z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-2.573 1.066c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-1.756.426-2.924.426-3.35 0a1.724 1.724 0 00-2.573-1.066c-.94-1.543.826-3.31 2.37-2.37a1.724 1.724 0 001.066-2.573z" />
                 </svg>
                 Settings
               </h1>
@@ -410,14 +410,6 @@ export default function SettingsPage() {
                   </svg>
                 </Link>
               )}
-              <button onClick={window.toggleCartwiseDarkMode}
-                className="ml-3 flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                <span className="sr-only">Toggle dark mode</span>
-                <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M9 3.5a5.5 5.5 0 11-3.071 9.807l1.414-1.414A3.5 3.5 0 0012.943 9.95l1.414-1.414A5.5 5.5 0 019 3.5z" />
-                </svg>
-              </button>
               <button onClick={handleSignOut}
                 className="ml-3 flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
@@ -508,8 +500,6 @@ export default function SettingsPage() {
                       </div>
                     </div>
                   )}
-                </div>
-              )}
                   {editingProfile && (
                     <form onSubmit={(e) => {
                       e.preventDefault();
@@ -726,10 +716,164 @@ export default function SettingsPage() {
                       </div>
                     </form>
                   )}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Analytics Section */}
+          <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg mb-6">
+            <div className="px-4 py-5 sm:p-6">
+              <h2 className="text-lg font-medium text-foreground mb-4">Analytics</h2>
+              {loading ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-600"></div>
+                </div>
+              ) : error ? (
+                <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-sm text-red-600">{error}</p>
+                </div>
+              ) : (
+                <>
+                  {/* Key Metrics Cards */}
+                  <div className="grid gap-4 mb-6 sm:grid-cols-2 lg:grid-cols-4">
+                    <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                      <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Saved</h3>
+                      <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                        ${savingsData.reduce((sum, d) => sum + d.amount, 0).toFixed(2)}
+                      </p>
+                    </div>
+                    <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                      <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Monthly Average</h3>
+                      <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                        ${(savingsData.reduce((sum, d) => sum + d.amount, 0) / Math.max(1, savingsData.length / 6)).toFixed(2)}
+                      </p>
+                    </div>
+                    <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                      <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Pantry Items</h3>
+                      <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                        {pantryStats.totalItems || 0}
+                      </p>
+                    </div>
+                    <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                      <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Available Items</h3>
+                      <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                        {pantryStats.availableItems || 0}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Savings Over Time Chart */}
+                  <div className="mb-6">
+                    <h3 className="text-lg font-medium text-foreground mb-4">Savings Over Time</h3>
+                    <div className="relative h-48 w-full">
+                      {savingsData.length > 0 ? (
+                        <div className="absolute inset-0">
+                          <svg className="h-full w-full">
+                            {/* X-axis */}
+                            <line x1="50" y1="40" x2="{50 + savingsData.length * 60}" y2="40" stroke="gray-300" strokeWidth={1} />
+                            {/* Y-axis */}
+                            <line x1="50" y1="40" x2="50" y2="0" stroke="gray-300" strokeWidth={1} />
+                            {/* Bars */}
+                            {savingsData.map((point, index) => {
+                              const height = Math.min(point.amount * 2, 30); // simple scaling
+                              const x = 50 + index * 60 + 20;
+                              const y = 40 - height;
+                              return (
+                                <rect key={index} x={x} y={y} width={20} height={height} fill="blue-500" />
+                              );
+                            })}
+                          </svg>
+                        </div>
+                      ) : (
+                        <p className="text-center text-gray-500">No savings data available</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Category Breakdown Chart */}
+                  <div className="mb-6">
+                    <h3 className="text-lg font-medium text-foreground mb-4">Category Breakdown</h3>
+                    <div className="space-y-2">
+                      {savingsData.length > 0 ? (
+                        <>
+                          {[...new Set(savingsData.map(d => d.type))].map((category, idx) => {
+                            const total = savingsData
+                              .filter(d => d.type === category)
+                              .reduce((sum, d) => sum + d.amount, 0);
+                            const percentage = savingsData.reduce((sum, d) => sum + d.amount, 0) > 0
+                              ? (total / savingsData.reduce((sum, d) => sum + d.amount, 0)) * 100
+                              : 0;
+                            return (
+                              <div key={idx} className="flex items-center space-x-3">
+                                <div className="w-3 h-3 rounded" style={{ backgroundColor: getCategoryColor(category) }}></div>
+                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{category}</span>
+                                <span className="ml-auto text-sm font-medium text-gray-700 dark:text-gray-300">
+                                  {percentage.toFixed(1)}%
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </>
+                      ) : (
+                        <p className="text-center text-gray-500">No category data available</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Pantry Stats */}
+                  <div className="mb-6">
+                    <h3 className="text-lg font-medium text-foreground mb-4">Pantry Statistics</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Total Value: ${pantryStats.totalValue || '0.00'}
+                    </p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Expiring Soon: {pantryStats.expiringSoon || 0} items
+                    </p>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* Badges Section */}
+          <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+            <div className="px-4 py-5 sm:p-6">
+              <h2 className="text-lg font-medium text-foreground mb-4">Badges Earned</h2>
+              {badges.length > 0 ? (
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                  {badges.map((badge) => (
+                    <div key={badge.badge_id} className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg text-center">
+                      <div className="h-12 w-12 mx-auto mb-2 flex items-center justify-center">
+                        <span className="text-2xl">{badge.icon || '🏆'}</span>
+                      </div>
+                      <h3 className="text-lg font-medium text-foreground">{badge.name}</h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">{badge.description}</p>
+                      <p className="text-xs text-gray-400 dark:text-gray-500">
+                        Earned: {new Date(badge.awardedAt).toLocaleDateString()}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-center text-gray-500">No badges earned yet</p>
+              )}
             </div>
           </div>
         </div>
       </div>
     </div>
   );
+}
+
+// Helper function to get category color
+function getCategoryColor(category) {
+  const colors = {
+    grocery: '#10b981', // emerald
+    dining: '#f59e0b', // amber
+    entertainment: '#8b5cf6', // violet
+    shopping: '#ec4899', // pink
+    other: '#6b7280' // gray
+  };
+  return colors[category] || colors.other;
 }

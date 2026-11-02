@@ -20,6 +20,7 @@ export default function ComparePage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [parsedResult, setParsedResult] = useState(null);
   const router = useRouter();
 
   // Auth handling (simplified - in a real app this would be in a layout or context)
@@ -79,7 +80,19 @@ export default function ComparePage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Something went wrong');
 
-      setResult(data.summary || data.error);
+      const summary = data.summary || data.error;
+      // Try to parse summary as JSON if it looks like JSON
+      let parsedSummary = null;
+      if (typeof summary === 'string') {
+        try {
+          const parsed = JSON.parse(summary);
+          parsedSummary = parsed;
+        } catch (e) {
+          // Not JSON, keep as string
+        }
+      }
+      setResult(summary);
+      setParsedResult(parsedSummary);
 
       // Add to history (in a real app, this would be saved to database)
       setHistory(prev => [
@@ -227,14 +240,6 @@ export default function ComparePage() {
                   </svg>
                 </Link>
               )}
-              <button onClick={window.toggleCartwiseDarkMode}
-                className="ml-3 flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 dark:hover:bg-indigo-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                <span className="sr-only">Toggle dark mode</span>
-                <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M9 3.5a5.5 5.5 0 11-3.071 9.807l1.414-1.414A3.5 3.5 0 0012.943 9.95l1.414-1.414A5.5 5.5 0 019 3.5z" />
-                </svg>
-              </button>
               <button onClick={() => {
                 const supabase = createClient();
                 if (supabase) {
@@ -304,15 +309,29 @@ export default function ComparePage() {
               <div className="px-4 py-5 sm:p-6">
                 <h2 className="text-lg font-medium text-foreground mb-4">Results for "{itemName}"</h2>
                 <div className="space-y-4">
-                  <div className="p-4 bg-blue-50 dark:bg-blue-800 rounded-lg border-l-4 border-blue-500 dark:border-l-4 dark:border-blue-400">
-                    <p className="text-lg text-gray-200 dark:text-gray-100">{result}</p>
-                  </div>
+                  {parsedResult && typeof parsedResult === 'object' && !Array.isArray(parsedResult) ? (
+                    <div className="p-4 bg-blue-50 dark:bg-blue-800 rounded-lg border-l-4 border-blue-500 dark:border-l-4 dark:border-blue-400">
+                      <div className="space-y-2">
+                        {Object.entries(parsedResult).map(([key, value]) => (
+                          <div key={key} className="flex justify-between">
+                            <span className="font-medium">{String(key)}:</span>
+                            <span className="text-gray-600 dark:text-gray-400">{typeof value === 'object' ? JSON.stringify(value, null, 2) : String(value)}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="p-4 bg-blue-50 dark:bg-blue-800 rounded-lg border-l-4 border-blue-500 dark:border-l-4 dark:border-blue-400">
+                      <p className="text-lg text-gray-200 dark:text-gray-100">{result}</p>
+                    </div>
+                  )}
 
                   <div className="flex items-center justify-between">
                     <button onClick={() => {
                       setItemName('');
                       setResult(null);
                       setError(null);
+                      setParsedResult(null);
                     }}
                       className="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                       New Search

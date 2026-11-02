@@ -13,106 +13,165 @@ export async function POST(request) {
       return Response.json({ error: 'No image provided' }, { status: 400 });
     }
 
-    // Step 1 — upload to HuggingFace
-    const uploadForm = new FormData();
-    const blob = new Blob([await image.arrayBuffer()], { type: image.type });
-    uploadForm.append('files', blob, image.name || 'receipt.jpg');
+    // Convert image to buffer
+    const arrayBuffer = await image.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
 
-    const uploadRes = await fetch(
-      'https://soulai40075-receipt-ocr-pipeline.hf.space/gradio_api/upload',
-      { method: 'POST', body: uploadForm }
-    );
-
-    const uploadData = await uploadRes.json();
-    const filePath = uploadData[0];
-
-    if (!filePath) {
-      return Response.json({ error: 'Upload failed', detail: uploadData }, { status: 500 });
+    // Check if HF_TOKEN is configured
+    if (!process.env.HF_TOKEN) {
+      throw new Error('Hugging Face API token not configured. Please set HF_TOKEN environment variable.');
     }
 
-    // Step 2 — submit job
-    const submitRes = await fetch(
-      'https://soulai40075-receipt-ocr-pipeline.hf.space/gradio_api/call/process_receipt',
+    // Call Hugging Face Inference API for OCR
+    const hfResponse = await fetch(
+      'https://api-inference.huggingface.co/models/microsoft/trocr-base-printed',
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          data: [{ path: filePath, meta: { _type: 'gradio.FileData' } }]
-        }),
+        headers: {
+          'Authorization': `Bearer ${process.env.HF_TOKEN}`,
+          'Content-Type': 'application/octet-stream',
+          'User-Agent': 'cartwise/1.0'
+        },
+        body: buffer
       }
     );
 
-    const submitData = await submitRes.json();
-    const eventId = submitData.event_id;
-
-    if (!eventId) {
-      return Response.json({ error: 'No event ID', detail: submitData }, { status: 500 });
+    if (!hfResponse.ok) {
+      const errorText = await hfResponse.text();
+      throw new Error(`HF Inference error: ${hfResponse.status}: ${errorText}`);
     }
 
-    // Step 3 — stream result
-    const resultRes = await fetch(
-      `https://soulai40075-receipt-ocr-pipeline.hf.space/gradio_api/call/process_receipt/${eventId}`
-    );
+    const result = await hfResponse.json();
+    // Assuming the model returns { generated_text: "..." } or similar
+    let generatedText = '';
+    if (result && typeof result === 'object') {
+      if (result.generated_text) {
+        generatedText = result.generated_text;
+      } else if (Array.isArray(result) && result[0] && result[0].generated_text) {
+        generatedText = result[0].generated_text;
+      } else {
+        generatedText = JSON.stringify(result);
+      }
+    } else {
+      generatedText = String(result);
+    }
 
-    const reader = resultRes.body.getReader();
-    const decoder = new TextDecoder();
-    let buffer = '';
+    // Basic parsing: try to extract useful information from OCR text
+    const lines = generatedText.split('\n').filter(line => line.trim() !== '');
 
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
+    // Heuristic: look for potential store name (often in first few lines, often has certain characteristics)
+    let detectedStoreName = 'Detected from OCR';
+    if (lines.length > 0) {
+      // Look for lines that might be store names (typically shorter, might contain common store indicators)
+      const storeCandidates = lines.slice(0, Math.min(5, lines.length)).filter(line =>
+        line.length > 2 && line.length < 50 &&
+        !line.match(/^\d+[\d\s\-:\/]+$/) && // Not just numbers/dates
+        !line.toLowerCase().match(/^(item|description|price|amount|total|sub|tax|change|cash|card)/i) // Not typical receipt items
+      );
 
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split('\n');
+      if (storeCandidates.length > 0) {
+        // Take the first reasonable candidate
+        detectedStoreName = storeCandidates[0];
+      }
+    }
 
-      for (const line of lines) {
-        if (line.startsWith('data:')) {
-          const raw = line.replace('data: ', '').trim();
-          try {
-            const resultData = JSON.parse(raw);
-            if (Array.isArray(resultData) && resultData.length >= 2) {
-              const parsed = JSON.parse(resultData[1]);
+    // Try to extract date (simple pattern matching)
+    let detectedDate = '';
+    const dateMatch = generatedText.match(/\d{1,2}[\/\-\.\]\d{1,2}[\/\-\.\]\d{2,4}|\d{2,4}[\/\-\.\]\d{1,2}[\/\-\.\]\d{1,2}/);
+    if (dateMatch) {
+      detectedDate = dateMatch[0];
+    }
 
-              // Step 4 — save to Supabase with user_id
-              if (userId && parsed.items?.length) {
-                const { createClient } = await import('@supabase/supabase-js');
-                const supabase = createClient(
-                  process.env.NEXT_PUBLIC_SUPABASE_URL,
-                  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-                  {
-                    global: {
-                      headers: { Authorization: `Bearer ${accessToken}` }
-                    }
-                  }
-                );
+    // Try to extract total amount
+    let detectedTotal = null;
+    const totalMatches = generatedText.match(/(?:total|amount|sum|balance)[\s\:$]*(\d+[,\.\d]*)/i);
+    if (totalMatches) {
+      try {
+        detectedTotal = parseFloat(totalMatches[1].replace(',', '.'));
+      } catch (e) {
+        // Ignore parsing errors
+      }
+    }
 
-                const rows = parsed.items.map(item => ({
-                  user_id: userId,
-                  store_name: parsed.store_name,
-                  store_address: parsed.store_address,
-                  date: parsed.date,
-                  time: parsed.time,
-                  item_name: item.name,
-                  unit_price: item.unit_price,
-                  price_type: item.price_type,
-                  quantity: item.quantity
-                }));
+    // Create items array with basic structure
+    const items = [];
+    if (detectedTotal !== null) {
+      items.push({
+        name: 'Total',
+        unit_price: detectedTotal,
+        price_type: 'each',
+        quantity: 1,
+        description: 'Detected total amount'
+      });
+    }
 
-                await supabase.from('receipts').insert(rows);
-              }
+    // Always include the raw text item
+    items.push({
+      name: 'OCR Text Detected',
+      unit_price: null,
+      price_type: null,
+      quantity: 1,
+      description: generatedText.substring(0, 200) + (generatedText.length > 200 ? '...' : '')
+    });
 
-              return Response.json(parsed);
-            }
-          } catch {
-            continue;
+    const parsed = {
+      store_name: detectedStoreName,
+      store_address: '', // Would need more advanced parsing
+      date: detectedDate,
+      time: '', // Would need more advanced parsing
+      items: items,
+      rawText: generatedText
+    };
+
+    // Optionally save to Supabase (optional)
+    if (userId && accessToken) {
+      try {
+        const { createClient } = await import('@supabase/supabase-js');
+        const supabase = createClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL,
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+          {
+            global: { headers: { Authorization: `Bearer ${accessToken}` } }
           }
-        }
+        );
+
+        const rows = [{
+          user_id: userId,
+          store_name: parsed.store_name,
+          store_address: parsed.store_address,
+          date: parsed.date,
+          time: parsed.time,
+          item_name: parsed.items[0].name,
+          unit_price: parsed.items[0].unit_price,
+          price_type: parsed.items[0].price_type,
+          quantity: parsed.items[0].quantity
+        }];
+
+        await supabase.from('receipts').insert(rows);
+      } catch (saveErr) {
+        console.error('Failed to save receipt to Supabase:', saveErr);
+        // Non-fatal
       }
     }
 
-    return Response.json({ error: 'No result received' }, { status: 500 });
-
+    return Response.json(parsed);
   } catch (err) {
-    return Response.json({ error: err.message }, { status: 500 });
+    console.error('OCR error:', err);
+    // Provide more specific error messages based on error type
+    let errorMessage = err.message;
+    let statusCode = 500;
+
+    if (err.message.includes('fetch failed')) {
+      errorMessage = 'Failed to connect to Hugging Face API. This could be due to network issues, missing API token, or service unavailability.';
+      statusCode = 503;
+    } else if (err.message.includes('HF Inference error')) {
+      // Keep the detailed HF error message
+      statusCode = 502;
+    } else if (err.message.includes('not configured')) {
+      errorMessage = 'Hugging Face API token not configured. Please set HF_TOKEN environment variable.';
+      statusCode = 500;
+    }
+
+    return Response.json({ error: errorMessage }, { status: statusCode });
   }
 }
