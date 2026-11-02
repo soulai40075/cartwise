@@ -227,7 +227,14 @@ export default function ComparePage() {
                   </svg>
                 </Link>
               )}
-
+              <button onClick={window.toggleCartwiseDarkMode}
+                className="ml-3 flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 dark:hover:bg-indigo-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                <span className="sr-only">Toggle dark mode</span>
+                <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M9 3.5a5.5 5.5 0 11-3.071 9.807l1.414-1.414A3.5 3.5 0 0012.943 9.95l1.414-1.414A5.5 5.5 0 019 3.5z" />
+                </svg>
+              </button>
               <button onClick={() => {
                 const supabase = createClient();
                 if (supabase) {
