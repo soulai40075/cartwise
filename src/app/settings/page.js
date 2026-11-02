@@ -283,14 +283,14 @@ export default function SettingsPage() {
 
   if (!authReadyState) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50">
+      <div className="flex min-h-screen flex-col items-center justify-center bg-background">
         <div className="text-center space-y-4">
           <div className="w-16 h-16 bg-gradient-to-r from-gray-500 to-blue-600 rounded-xl flex items-center justify-center">
             <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-1.756.426-2.924.426-3.35 0a1.724 1.724 0 00-2.573-1.066c-.94-1.543.826-3.31 2.37-2.37a1.724 1.724 0 001.066-2.573z" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900">Loading...</h2>
+          <h2 className="text-2xl font-bold text-foreground">Loading...</h2>
         </div>
       </div>
     );
@@ -306,14 +306,14 @@ export default function SettingsPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-1.756.426-2.924.426-3.35 0a1.724 1.724 0 00-2.573 1.066c-.94-1.543.826-3.31 2.37-2.37a1.724 1.724 0 00-1.066-2.573c-.426-1.756-.426-2.924 0-3.35a1.724 1.724 0 001.066-2.573z" />
               </svg>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900">Settings</h2>
+            <h2 className="text-2xl font-bold text-foreground">Settings</h2>
             <p className="text-lg text-gray-600">
               Customize your preferences and profile
             </p>
 
             <div className="space-y-4">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-400 dark:text-gray-500 mb-1">
                   Email
                 </label>
                 <input
@@ -322,11 +322,11 @@ export default function SettingsPage() {
                   required
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 />
               </div>
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-400 dark:text-gray-500 mb-1">
                   Password
                 </label>
                 <input
@@ -335,12 +335,12 @@ export default function SettingsPage() {
                   required
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 />
               </div>
 
               {authError && (
-                <div className="bg-red-50 border border-red-200 text-red-500 px-4 py-3 rounded-md">
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-600 text-red-500 dark:text-red-400 px-4 py-3 rounded-md">
                   {authError}
                 </div>
               )}
@@ -361,13 +361,13 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
+      <div className="bg-white dark:bg-gray-800 shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <div className="flex-1 min-w-0">
-              <h1 className="text-2xl font-bold text-gray-900 flex items-center">
+              <h1 className="text-2xl font-bold text-foreground flex items-center">
                 <svg className="h-5 w-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-1.756.426-2.924.426-3.35 0a1.724 1.724 0 00-2.573-1.066c-.94-1.543.826-3.31 2.37-2.37a1.724 1.724 0 00-1.066-2.573c-.426-1.756-.426-2.924 0-3.35a1.724 1.724 0 001.066-2.573z" />
                 </svg>
@@ -400,9 +400,9 @@ export default function SettingsPage() {
       <div className="px-4 sm:px-6 lg:px-8 py-8">
         <div className="max-w-4xl mx-auto">
           {/* Profile Section */}
-          <div className="bg-white overflow-hidden shadow rounded-lg mb-6">
+          <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg mb-6">
             <div className="px-4 py-5 sm:p-6">
-              <h2 className="text-lg font-medium text-gray-900 mb-4">Profile</h2>
+              <h2 className="text-lg font-medium text-foreground mb-4">Profile</h2>
               {loading ? (
                 <div className="flex items-center justify-center py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-600"></div>
@@ -422,7 +422,7 @@ export default function SettingsPage() {
                           </div>
                         </div>
                         <div className="ml-4">
-                          <h3 className="text-lg font-medium text-gray-900">
+                          <h3 className="text-lg font-medium text-foreground">
                             {profile.display_name || user.email.split('@')[0]}
                           </h3>
                           <p className="text-sm text-gray-500">
@@ -437,8 +437,8 @@ export default function SettingsPage() {
                             ðŸ‘¨â€ðŸ‘©â€ðŸ‘§â€ðŸ‘¦
                           </span>
                           <span className="ml-3">
-                            <p className="text-sm font-medium text-gray-700">Household Size</p>
-                            <p className="text-sm font-medium text-gray-900">{profile.household_size}</p>
+                            <p className="text-sm font-medium text-gray-400 dark:text-gray-500">Household Size</p>
+                            <p className="text-sm font-medium text-foreground">{profile.household_size}</p>
                           </span>
                         </div>
 
@@ -447,8 +447,8 @@ export default function SettingsPage() {
                             ðŸ›’
                           </span>
                           <span className="ml-3">
-                            <p className="text-sm font-medium text-gray-700">Shopping Style</p>
-                            <p className="text-sm font-medium text-gray-900">
+                            <p className="text-sm font-medium text-gray-400 dark:text-gray-500">Shopping Style</p>
+                            <p className="text-sm font-medium text-foreground">
                               {profile.shopping_style.charAt(0).toUpperCase() + profile.shopping_style.slice(1)}
                             </p>
                           </span>
@@ -459,8 +459,8 @@ export default function SettingsPage() {
                             ðŸ“
                           </span>
                           <span className="ml-3">
-                            <p className="text-sm font-medium text-gray-700">Search Radius</p>
-                            <p className="text-sm font-medium text-gray-900">{profile.max_radius_miles} miles</p>
+                            <p className="text-sm font-medium text-gray-400 dark:text-gray-500">Search Radius</p>
+                            <p className="text-sm font-medium text-foreground">{profile.max_radius_miles} miles</p>
                           </span>
                         </div>
                       </div>
@@ -481,40 +481,40 @@ export default function SettingsPage() {
                       handleSaveProfile();
                     }} className="space-y-4">
                       <div className="space-y-2">
-                        <label className="block text-sm font-medium text-gray-700">Display Name</label>
+                        <label className="block text-sm font-medium text-gray-400 dark:text-gray-500">Display Name</label>
                         <input
                           type="text"
                           name="display_name"
                           value={formState.display_name}
                           onChange={handleInputChange}
-                          className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                          className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                         />
                       </div>
 
                       <div className="space-y-2">
-                        <label className="block text-sm font-medium text-gray-700">Avatar URL (optional)</label>
+                        <label className="block text-sm font-medium text-gray-400 dark:text-gray-500">Avatar URL (optional)</label>
                         <input
                           type="text"
                           name="avatar_url"
                           value={formState.avatar_url}
                           onChange={handleInputChange}
-                          className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                          className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                         />
                       </div>
 
                       <div className="space-y-2">
-                        <label className="block text-sm font-medium text-gray-700">Friend Code</label>
+                        <label className="block text-sm font-medium text-gray-400 dark:text-gray-500">Friend Code</label>
                         <input
                           type="text"
                           name="friend_code"
                           value={formState.friend_code}
                           onChange={handleInputChange}
-                          className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                          className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                         />
                       </div>
 
                       <div className="space-y-2">
-                        <label className="block text-sm font-medium text-gray-700">Household Size</label>
+                        <label className="block text-sm font-medium text-gray-400 dark:text-gray-500">Household Size</label>
                         <input
                           type="number"
                           min="1"
@@ -522,12 +522,12 @@ export default function SettingsPage() {
                           name="household_size"
                           value={formState.household_size}
                           onChange={handleInputChange}
-                          className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                          className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                         />
                       </div>
 
                       <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Diet Preferences</label>
+                        <label className="block text-sm font-medium text-gray-400 dark:text-gray-500 mb-2">Diet Preferences</label>
                         <div className="flex flex-wrap gap-2">
                           {['vegetarian', 'vegan', 'gluten-free', 'dairy-free', 'keto', 'paleo', 'halal', 'kosher'].map((diet) => (
                             <label key={diet} className="flex items-center">
@@ -549,7 +549,7 @@ export default function SettingsPage() {
                                     }));
                                   }
                                 }}
-                                className="h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                                className="h-4 w-4 text-indigo-600 border-gray-300 dark:border-gray-600 rounded"
                               />
                               <span className="ml-2 text-sm">{diet}</span>
                             </label>
@@ -558,7 +558,7 @@ export default function SettingsPage() {
                       </div>
 
                       <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Brands to Avoid</label>
+                        <label className="block text-sm font-medium text-gray-400 dark:text-gray-500 mb-2">Brands to Avoid</label>
                         <input
                           type="text"
                           name="avoid_brands"
@@ -574,12 +574,12 @@ export default function SettingsPage() {
                               avoid_brands: brands
                             }));
                           }}
-                          className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                          className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                         />
                       </div>
 
                       <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Favorite Brands</label>
+                        <label className="block text-sm font-medium text-gray-400 dark:text-gray-500 mb-2">Favorite Brands</label>
                         <input
                           type="text"
                           name="favorite_brands"
@@ -595,12 +595,12 @@ export default function SettingsPage() {
                               favorite_brands: brands
                             }));
                           }}
-                          className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                          className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                         />
                       </div>
 
                       <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Favorite Stores</label>
+                        <label className="block text-sm font-medium text-gray-400 dark:text-gray-500 mb-2">Favorite Stores</label>
                         <input
                           type="text"
                           name="favorite_stores"
@@ -616,18 +616,18 @@ export default function SettingsPage() {
                               favorite_stores: stores
                             }));
                           }}
-                          className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                          className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                         />
                       </div>
 
                       <div className="mb-4 grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700">Shopping Style</label>
+                          <label className="block text-sm font-medium text-gray-400 dark:text-gray-500">Shopping Style</label>
                           <select
                             name="shopping_style"
                             value={formState.shopping_style}
                             onChange={handleInputChange}
-                            className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                           >
                             <option value="balanced">Balanced</option>
                             <option value="savings-focused">Savings Focused</option>
@@ -637,7 +637,7 @@ export default function SettingsPage() {
                         </div>
 
                         <div>
-                          <label className="block text-sm font-medium text-gray-700">Max Search Radius (miles)</label>
+                          <label className="block text-sm font-medium text-gray-400 dark:text-gray-500">Max Search Radius (miles)</label>
                           <input
                             type="number"
                             min="1"
@@ -645,12 +645,12 @@ export default function SettingsPage() {
                             name="max_radius_miles"
                             value={formState.max_radius_miles}
                             onChange={handleInputChange}
-                            className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                           />
                         </div>
 
                         <div>
-                          <label className="block text-sm font-medium text-gray-700">Gas Cost per Mile ($)</label>
+                          <label className="block text-sm font-medium text-gray-400 dark:text-gray-500">Gas Cost per Mile ($)</label>
                           <input
                             type="number"
                             min="0.1"
@@ -659,19 +659,19 @@ export default function SettingsPage() {
                             name="gas_cost_per_mile"
                             value={formState.gas_cost_per_mile}
                             onChange={handleInputChange}
-                            className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                           />
                         </div>
 
                         <div>
-                          <label className="block text-sm font-medium text-gray-700">Public Profile</label>
+                          <label className="block text-sm font-medium text-gray-400 dark:text-gray-500">Public Profile</label>
                           <div className="flex items-center">
                             <input
                               type="checkbox"
                               name="public_profile"
                               checked={formState.public_profile}
                               onChange={handleInputChange}
-                              className="h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                              className="h-4 w-4 text-indigo-600 border-gray-300 dark:border-gray-600 rounded"
                             />
                             <span className="ml-2 text-sm">Allow others to see your profile</span>
                           </div>
@@ -681,7 +681,7 @@ export default function SettingsPage() {
                       <div className="mt-6 flex justify-end space-x-3">
                         <button type="button"
                           onClick={() => setEditingProfile(false)}
-                          className="px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                          className="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-400 dark:text-gray-500 hover:bg-background focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                           Cancel
                         </button>
                         <button type="submit"

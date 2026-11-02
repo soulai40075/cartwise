@@ -22,10 +22,53 @@ export default function RootLayout({ children }) {
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      // Dark mode class will be added/removed by client-side script
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col bg-background text-foreground">
         <Analytics />
         {children}
+        {/* Client-side script to handle dark mode based on system preference and user choice */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              // Function to set dark mode class on html element
+              function setDarkMode(isDark) {
+                if (isDark) {
+                  document.documentElement.classList.add('dark');
+                } else {
+                  document.documentElement.classList.remove('dark');
+                }
+              }
+
+              // Check for saved user preference or use system preference
+              function getPreferredDarkMode() {
+                const saved = localStorage.getItem('cartwise-dark-mode');
+                if (saved !== null) {
+                  return saved === 'true';
+                }
+                return window.matchMedia('(prefers-color-scheme: dark)').matches;
+              }
+
+              // Initialize dark mode on load
+              setDarkMode(getPreferredDarkMode());
+
+              // Listen for changes in system preference
+              window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                // Only update if user hasn't set a manual preference
+                if (localStorage.getItem('cartwise-dark-mode') === null) {
+                  setDarkMode(e.matches);
+                }
+              });
+
+              // Optional: expose a function to toggle dark mode (could be used by a UI toggle)
+              window.toggleCartwiseDarkMode = () => {
+                const isDark = document.documentElement.classList.contains('dark');
+                localStorage.setItem('cartwise-dark-mode', String(!isDark));
+                setDarkMode(!isDark);
+              };
+            `
+          }}
+        />
       </body>
     </html>
   );

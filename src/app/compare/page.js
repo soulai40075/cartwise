@@ -106,7 +106,7 @@ export default function ComparePage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900">Loading...</h2>
+          <h2 className="text-2xl font-bold text-foreground">Loading...</h2>
         </div>
       </div>
     );
@@ -114,7 +114,7 @@ export default function ComparePage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+      <div className="min-h-screen bg-white dark:bg-gray-800">
         <div className="max-w-xl mx-auto py-16 px-4 sm:py-20">
           <div className="text-center space-y-6">
             <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center mx-auto">
@@ -122,14 +122,14 @@ export default function ComparePage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900">Compare Prices</h2>
-            <p className="text-lg text-gray-600">
+            <h2 className="text-2xl font-bold text-foreground">Compare Prices</h2>
+            <p className="text-lg text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-500">
               Find the best prices for grocery items
             </p>
 
             <div className="space-y-4">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-500 mb-1">
                   Email
                 </label>
                 <input
@@ -138,11 +138,11 @@ export default function ComparePage() {
                   required
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 />
               </div>
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-500 mb-1">
                   Password
                 </label>
                 <input
@@ -151,18 +151,18 @@ export default function ComparePage() {
                   required
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 />
               </div>
 
               {authError && (
-                <div className="bg-red-50 border border-red-200 text-red-500 px-4 py-3 rounded-md">
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-600 text-red-500 dark:text-red-400 px-4 py-3 rounded-md">
                   {authError}
                 </div>
               )}
 
               <button onClick={handleAuth} disabled={authLoading}
-                className="w-full flex items-center justify-between px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50">
+                className="w-full flex items-center justify-between px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 dark:hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50">
                 {authLoading ? 'Please wait...' : authMode === 'login' ? 'Sign In' : 'Sign Up'}
                 <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L14 5.414V13a1 1 0 01-2 0V5.414L8.293 7.707a1 1 0 010-1.414l6-6z" clipRule="evenodd" />
@@ -177,13 +177,13 @@ export default function ComparePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
+      <div className="bg-white dark:bg-gray-800 shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <div className="flex-1 min-w-0">
-              <h1 className="text-2xl font-bold text-gray-900 flex items-center">
+              <h1 className="text-2xl font-bold text-foreground flex items-center">
                 <svg className="h-5 w-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
@@ -207,7 +207,7 @@ export default function ComparePage() {
                   window.location.reload();
                 }
               }}
-                className="ml-3 flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                className="ml-3 flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 dark:hover:bg-indigo-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                 <span className="mr-2">Sign Out ({user.email.split('@')[0]})</span>
                 <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M4 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H4zm2 14-5-5v3.41a6 6 0 014.24 8.25l1.41-1.41A8 8 0 1015 9V4a1 1 0 00-2 0v5a1 1 0 01-2 0V4a1 1 0 012 0 2 0V4h6.59a8 8 0 00-11.41 3.41l-1.41 1.41A6 6 0 015 12.41v3.59z" clipRule="evenodd" />
@@ -221,12 +221,12 @@ export default function ComparePage() {
       {/* Main Content */}
       <div className="px-4 sm:px-6 lg:px-8 py-8">
         <div className="max-w-2xl mx-auto">
-          <div className="bg-white overflow-hidden shadow rounded-lg mb-6">
+          <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg mb-6">
             <div className="px-4 py-5 sm:p-6">
-              <h2 className="text-lg font-medium text-gray-900 mb-4">Find Best Prices</h2>
+              <h2 className="text-lg font-medium text-foreground mb-4">Find Best Prices</h2>
               <div className="space-y-4">
                 <div className="relative">
-                  <label htmlFor="item-name" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="item-name" className="block text-sm font-medium text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-500 mb-1">
                     Item Name
                   </label>
                   <div className="relative">
@@ -236,7 +236,7 @@ export default function ComparePage() {
                       placeholder="e.g., milk, bread, chicken breast"
                       value={itemName}
                       onChange={e => setItemName(e.target.value)}
-                      className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                      className="w-full px-4 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                     >
                     </input>
                     <button onClick={handleSearch}
@@ -267,10 +267,10 @@ export default function ComparePage() {
           {result && (
             <div className="bg-white overflow-hidden shadow rounded-lg">
               <div className="px-4 py-5 sm:p-6">
-                <h2 className="text-lg font-medium text-gray-900 mb-4">Results for "{itemName}"</h2>
+                <h2 className="text-lg font-medium text-foreground mb-4">Results for "{itemName}"</h2>
                 <div className="space-y-4">
-                  <div className="p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500">
-                    <p className="text-lg text-gray-800">{result}</p>
+                  <div className="p-4 bg-blue-50 dark:bg-blue-800 rounded-lg border-l-4 border-blue-500 dark:border-l-4 dark:border-blue-400">
+                    <p className="text-lg text-gray-200 dark:text-gray-100">{result}</p>
                   </div>
 
                   <div className="flex items-center justify-between">
@@ -279,7 +279,7 @@ export default function ComparePage() {
                       setResult(null);
                       setError(null);
                     }}
-                      className="px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                      className="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                       New Search
                     </button>
 
@@ -287,7 +287,7 @@ export default function ComparePage() {
                       // In a real app, this would save to search history or favorites
                       alert('Saved to your search history!');
                     }}
-                      className="px-4 py-2 bg-indigo-600 text-white font-medium rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600">
+                      className="px-4 py-2 bg-indigo-600 dark:bg-indigo-500 text-white font-medium rounded-md shadow-sm hover:bg-indigo-700 dark:hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600">
                       Save Search
                     </button>
                   </div>
@@ -299,16 +299,16 @@ export default function ComparePage() {
           {/* Search History */}
           {history.length > 0 && (
             <div className="mt-6">
-              <h2 className="text-lg font-medium text-gray-900 mb-4">Recent Searches</h2>
+              <h2 className="text-lg font-medium text-foreground mb-4">Recent Searches</h2>
               <div className="space-y-3">
                 {history.map(item => (
-                  <div key={item.id} className="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow duration-300">
+                  <div key={item.id} className="p-4 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:shadow-md transition-shadow duration-300">
                     <div className="flex justify-between items-start">
                       <div>
-                        <p className="font-medium text-gray-900">{item.item}</p>
-                        <p className="text-sm text-gray-500">{item.result}</p>
+                        <p className="font-medium text-foreground">{item.item}</p>
+                        <p className="text-sm text-gray-400 dark:text-gray-500 dark:text-gray-500">{item.result}</p>
                       </div>
-                      <span className="text-xs text-gray-400">
+                      <span className="text-xs text-gray-400 dark:text-gray-500">
                         {new Date(item.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                       </span>
                     </div>
