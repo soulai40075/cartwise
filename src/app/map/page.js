@@ -351,7 +351,7 @@ export default function MapPage() {
                   <path fillRule="evenodd" d="M10.293 3.293a1 1 0 00-1.414-1.414L8 5.414V13a1 1 0 002 0V5.414L8.293 7.707a1 1 0 000-1.414l6-6z" clipRule="evenodd" />
                   <path fillRule="evenodd" d="M4 9h2v7H4V9zm4 0h2v7h-2V9z" clipRule="evenodd" />
                 </svg>
-              </button>}
+              </button>
               <button onClick={() => {
                 const supabase = createClient();
                 if (supabase) {

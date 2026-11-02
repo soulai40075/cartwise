@@ -510,7 +510,7 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="min-w-0 flex-1">
-                    <!-- Savings opportunity moved to stats overview for prominence -->
+                    {/* Savings opportunity moved to stats overview for prominence */}
                   </div>
                 </div>
               </div>
