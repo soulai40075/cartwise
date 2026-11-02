@@ -77,7 +77,7 @@ export async function POST(request) {
 
     // Try to extract date (simple pattern matching)
     let detectedDate = '';
-    const dateMatch = generatedText.match(/\d{1,2}[\/\-\.\]\d{1,2}[\/\-\.\]\d{2,4}|\d{2,4}[\/\-\.\]\d{1,2}[\/\-\.\]\d{1,2}/);
+    const dateMatch = generatedText.match(/\d{1,2}[.\/\-]\d{1,2}[.\/\-]\d{2,4}|\d{2,4}[.\/\-]\d{1,2}[.\/\-]\d{1,2}/);
     if (dateMatch) {
       detectedDate = dateMatch[0];
     }
